@@ -21,12 +21,15 @@ def put(name, snippet):
     return name, snippet
   
   
-  
 def get(name):
-#     """Retrieve the snippet with a given name.
-#     cursor = connection.cursor()
-#     command = "select from snippets where keyword=name"
-#     cursor.fetchone()
+    """Retrieve the snippet with a given name."""
+    cursor = connection.cursor()
+    command = "select keyword, message from snippets where keyword=%s"
+    cursor.execute(command, (name,))
+    row_tuple = cursor.fetchone()
+#     print row_tuple
+    keyword, message = row_tuple
+    return message
   
   
 def main():

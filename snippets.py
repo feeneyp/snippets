@@ -27,7 +27,7 @@ def get(name):
     command = "select keyword, message from snippets where keyword=%s"
     cursor.execute(command, (name,))
     row_tuple = cursor.fetchone()
-#     print row_tuple
+    connection.commit()
     keyword, message = row_tuple
     return message
   

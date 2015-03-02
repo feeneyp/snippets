@@ -14,16 +14,23 @@ def put(name, snippet):
     """Store a snippet with an associated name."""
     logging.info("Storing snippet {!r}: {!r}".format(name, snippet))
     cursor = connection.cursor()
-    command = "insert into snippets values (%s, %s)"
-    cursor.execute(command, (name, snippet))
+    command = "select keyword, message from snippets where keyword=%s"
+    cursor.execute(command, (name,))
+    row_tuple = cursor.fetchone()
     connection.commit()
+    if row_tuple[1] == None:
+      command = "insert into snippets values (%s, %s)"   
+      cursor.execute(command, (name, snippet))
+    else:
+      command = "update snippets set message=%s where keyword=%s"   
+      cursor.execute(command, (snippet, name))
     logging.debug("Snippet stored successfully.")
     return name, snippet
   
   
 def get(name):
     """Retrieve the snippet with a given name."""
-    logging.info("Searching fro snippet {!r}".format(name))
+    logging.info("Searching for snippet {!r}".format(name))
     cursor = connection.cursor()
     command = "select keyword, message from snippets where keyword=%s"
     cursor.execute(command, (name,))
@@ -33,7 +40,7 @@ def get(name):
       keyword, message = row_tuple
     except:
       message = None
-    logging.info("Retrieval finished {!r}".format(name))  
+    logging.info("Retrieval finished for snippet {!r}".format(name))  
     return message
   
   
@@ -69,7 +76,7 @@ def main():
         if snippet:
           print("Retrieved snippet: {!r}".format(snippet))
         else:
-          print "No snippets found" #this is so the return statement can execute without an error
+          print "No snippets found" #this is so the return statement in the get function can execute without an error
     
 
 if __name__ == "__main__":
